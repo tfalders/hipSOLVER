@@ -4119,6 +4119,9 @@ try
     *lwork = 0;
     size_t sz;
 
+    bool use_V_copy = min(m, n) > 0 && jobz != HIPSOLVER_EIG_MODE_NOVECTOR;
+    int  ldv_copy   = use_V_copy ? (econ ? min(m, n) : n) : 1;
+
     rocblas_start_device_memory_size_query((rocblas_handle)handle);
     hipsolverStatus_t status
         = rocblas2hip_status(rocsolver_sgesvd((rocblas_handle)handle,
@@ -4132,7 +4135,7 @@ try
                                               nullptr,
                                               ldu,
                                               nullptr,
-                                              ldv,
+                                              ldv_copy,
                                               nullptr,
                                               rocblas_outofplace,
                                               nullptr));
@@ -4142,8 +4145,7 @@ try
     size_t size_E = min(m, n) > 0 ? sizeof(float) * min(m, n) : 0;
 
     // space for V_copy array
-    bool   use_V_copy  = min(m, n) > 0 && jobz != HIPSOLVER_EIG_MODE_NOVECTOR;
-    size_t size_V_copy = use_V_copy ? sizeof(float) * (econ ? min(m, n) : n) * n : 0;
+    size_t size_V_copy = use_V_copy ? sizeof(float) * ldv_copy * n : 0;
 
     // update size
     rocblas_start_device_memory_size_query((rocblas_handle)handle);
@@ -4189,6 +4191,9 @@ try
     *lwork = 0;
     size_t sz;
 
+    bool use_V_copy = min(m, n) > 0 && jobz != HIPSOLVER_EIG_MODE_NOVECTOR;
+    int  ldv_copy   = use_V_copy ? (econ ? min(m, n) : n) : 1;
+
     rocblas_start_device_memory_size_query((rocblas_handle)handle);
     hipsolverStatus_t status
         = rocblas2hip_status(rocsolver_dgesvd((rocblas_handle)handle,
@@ -4202,7 +4207,7 @@ try
                                               nullptr,
                                               ldu,
                                               nullptr,
-                                              ldv,
+                                              ldv_copy,
                                               nullptr,
                                               rocblas_outofplace,
                                               nullptr));
@@ -4212,8 +4217,7 @@ try
     size_t size_E = min(m, n) > 0 ? sizeof(double) * min(m, n) : 0;
 
     // space for V_copy array
-    bool   use_V_copy  = min(m, n) > 0 && jobz != HIPSOLVER_EIG_MODE_NOVECTOR;
-    size_t size_V_copy = use_V_copy ? sizeof(double) * (econ ? min(m, n) : n) * n : 0;
+    size_t size_V_copy = use_V_copy ? sizeof(double) * ldv_copy * n : 0;
 
     // update size
     rocblas_start_device_memory_size_query((rocblas_handle)handle);
@@ -4259,6 +4263,9 @@ try
     *lwork = 0;
     size_t sz;
 
+    bool use_V_copy = min(m, n) > 0 && jobz != HIPSOLVER_EIG_MODE_NOVECTOR;
+    int  ldv_copy   = use_V_copy ? (econ ? min(m, n) : n) : 1;
+
     rocblas_start_device_memory_size_query((rocblas_handle)handle);
     hipsolverStatus_t status
         = rocblas2hip_status(rocsolver_cgesvd((rocblas_handle)handle,
@@ -4272,7 +4279,7 @@ try
                                               nullptr,
                                               ldu,
                                               nullptr,
-                                              ldv,
+                                              ldv_copy,
                                               nullptr,
                                               rocblas_outofplace,
                                               nullptr));
@@ -4282,9 +4289,7 @@ try
     size_t size_E = min(m, n) > 0 ? sizeof(float) * min(m, n) : 0;
 
     // space for V_copy array
-    bool   use_V_copy = min(m, n) > 0 && jobz != HIPSOLVER_EIG_MODE_NOVECTOR;
-    size_t size_V_copy
-        = use_V_copy ? sizeof(rocblas_float_complex) * (econ ? min(m, n) : n) * n : 0;
+    size_t size_V_copy = use_V_copy ? sizeof(rocblas_float_complex) * ldv_copy * n : 0;
 
     // update size
     rocblas_start_device_memory_size_query((rocblas_handle)handle);
@@ -4330,6 +4335,9 @@ try
     *lwork = 0;
     size_t sz;
 
+    bool use_V_copy = min(m, n) > 0 && jobz != HIPSOLVER_EIG_MODE_NOVECTOR;
+    int  ldv_copy   = use_V_copy ? (econ ? min(m, n) : n) : 1;
+
     rocblas_start_device_memory_size_query((rocblas_handle)handle);
     hipsolverStatus_t status
         = rocblas2hip_status(rocsolver_zgesvd((rocblas_handle)handle,
@@ -4343,7 +4351,7 @@ try
                                               nullptr,
                                               ldu,
                                               nullptr,
-                                              ldv,
+                                              ldv_copy,
                                               nullptr,
                                               rocblas_outofplace,
                                               nullptr));
@@ -4353,9 +4361,7 @@ try
     size_t size_E = min(m, n) > 0 ? sizeof(double) * min(m, n) : 0;
 
     // space for V_copy array
-    bool   use_V_copy = min(m, n) > 0 && jobz != HIPSOLVER_EIG_MODE_NOVECTOR;
-    size_t size_V_copy
-        = use_V_copy ? sizeof(rocblas_double_complex) * (econ ? min(m, n) : n) * n : 0;
+    size_t size_V_copy = use_V_copy ? sizeof(rocblas_double_complex) * ldv_copy * n : 0;
 
     // update size
     rocblas_start_device_memory_size_query((rocblas_handle)handle);
@@ -4459,7 +4465,7 @@ try
     if(jobz != HIPSOLVER_EIG_MODE_NOVECTOR)
         return rocblas2hip_status(rocblas_sgeam((rocblas_handle)handle,
                                                 rocblas_operation_transpose,
-                                                rocblas_operation_none,
+                                                rocblas_operation_transpose,
                                                 n,
                                                 ldv_copy,
                                                 &one,
@@ -4563,7 +4569,7 @@ try
     if(jobz != HIPSOLVER_EIG_MODE_NOVECTOR)
         return rocblas2hip_status(rocblas_dgeam((rocblas_handle)handle,
                                                 rocblas_operation_transpose,
-                                                rocblas_operation_none,
+                                                rocblas_operation_transpose,
                                                 n,
                                                 ldv_copy,
                                                 &one,
@@ -4666,7 +4672,7 @@ try
     if(jobz != HIPSOLVER_EIG_MODE_NOVECTOR)
         return rocblas2hip_status(rocblas_cgeam((rocblas_handle)handle,
                                                 rocblas_operation_conjugate_transpose,
-                                                rocblas_operation_none,
+                                                rocblas_operation_conjugate_transpose,
                                                 n,
                                                 ldv_copy,
                                                 &one,
@@ -4770,7 +4776,7 @@ try
     if(jobz != HIPSOLVER_EIG_MODE_NOVECTOR)
         return rocblas2hip_status(rocblas_zgeam((rocblas_handle)handle,
                                                 rocblas_operation_conjugate_transpose,
-                                                rocblas_operation_none,
+                                                rocblas_operation_conjugate_transpose,
                                                 n,
                                                 ldv_copy,
                                                 &one,
