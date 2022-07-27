@@ -34,7 +34,11 @@ const vector<vector<int>> size_range = {
     {20, 20, 0},
     {30, 30, 0},
     {32, 30, 0},
-};
+    {4, 4, 0},
+    {1024, 4, 0},
+    {4, 1024, 0},
+    {1048576, 3, 0},
+    {3, 1048576, 0}};
 
 const vector<vector<int>> opt_range = {
     // normal (valid) samples
