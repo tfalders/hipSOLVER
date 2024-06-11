@@ -564,7 +564,10 @@ try
         return HIPSOLVER_STATUS_HANDLE_IS_NULLPTR;
 
     // Create the rocBLAS handle
-    return hipsolver::rocblas2hip_status(rocblas_create_handle((rocblas_handle*)handle));
+    CHECK_ROCBLAS_ERROR(rocblas_create_handle((rocblas_handle*)handle));
+    rocblas_initialize();
+
+    return HIPSOLVER_STATUS_SUCCESS;
 }
 catch(...)
 {
